@@ -51,11 +51,13 @@ public class AudioplayersPlugin implements MethodCallHandler {
         final String playerId = call.argument("playerId");
         final String mode = call.argument("mode");
         final Player player = getPlayer(playerId, mode);
+        int result = 1;
         switch (call.method) {
             case "play": {
                 final String url = call.argument("url");
                 final double volume = call.argument("volume");
                 final Integer position = call.argument("position");
+                final double rate = call.argument("rate");
                 final boolean respectSilence = call.argument("respectSilence");
                 final boolean isLocal = call.argument("isLocal");
                 final boolean stayAwake = call.argument("stayAwake");
@@ -65,6 +67,7 @@ public class AudioplayersPlugin implements MethodCallHandler {
                 if (position != null && !mode.equals("PlayerMode.LOW_LATENCY")) {
                     player.seek(position);
                 }
+                player.setRate(rate);
                 player.play();
                 break;
             }
@@ -94,6 +97,11 @@ public class AudioplayersPlugin implements MethodCallHandler {
                 player.setVolume(volume);
                 break;
             }
+            case "setRate": {
+                final double rate = call.argument("rate");
+                result = player.setRate(rate);
+                break;
+            }
             case "setUrl": {
                 final String url = call.argument("url");
                 final boolean isLocal = call.argument("isLocal");
@@ -120,7 +128,7 @@ public class AudioplayersPlugin implements MethodCallHandler {
                 return;
             }
         }
-        response.success(1);
+        response.success(result);
     }
 
     private Player getPlayer(String playerId, String mode) {

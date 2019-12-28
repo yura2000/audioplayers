@@ -15,6 +15,7 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
 
     private String url;
     private double volume = 1.0;
+    private double rate = 1.0;
     private boolean respectSilence;
     private boolean stayAwake;
     private ReleaseMode releaseMode = ReleaseMode.RELEASE;
@@ -64,6 +65,22 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
                 this.player.setVolume((float) volume, (float) volume);
             }
         }
+    }
+
+    @Override
+    int setRate(double rate) {
+        if (this.rate != rate) {
+            this.rate = rate;
+            if (!this.released) {
+                this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+                this.playing = rate != 0;
+                if(this.playing) {
+                    this.ref.handleIsPlaying(this);
+                }
+                return this.playing? 1 : 3;
+            }
+        }
+        return 2;
     }
 
     @Override
@@ -132,6 +149,7 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
             } else if (this.prepared) {
                 this.player.start();
                 this.ref.handleIsPlaying(this);
+                this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
             }
         }
     }
@@ -200,6 +218,7 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
         if (this.playing) {
             this.player.start();
             ref.handleIsPlaying(this);
+            this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
         }
         if (this.shouldSeekTo >= 0) {
             this.player.seekTo(this.shouldSeekTo);
