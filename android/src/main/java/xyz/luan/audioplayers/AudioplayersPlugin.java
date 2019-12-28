@@ -57,7 +57,7 @@ public class AudioplayersPlugin implements MethodCallHandler {
                 final String url = call.argument("url");
                 final double volume = call.argument("volume");
                 final Integer position = call.argument("position");
-                final double rate = call.argument("rate");
+                final double rate = call.argument("playbackRate");
                 final boolean respectSilence = call.argument("respectSilence");
                 final boolean isLocal = call.argument("isLocal");
                 final boolean stayAwake = call.argument("stayAwake");
@@ -97,8 +97,8 @@ public class AudioplayersPlugin implements MethodCallHandler {
                 player.setVolume(volume);
                 break;
             }
-            case "setRate": {
-                final double rate = call.argument("rate");
+            case "setPlaybackRate": {
+                final double rate = call.argument("playbackRate");
                 result = player.setRate(rate);
                 break;
             }

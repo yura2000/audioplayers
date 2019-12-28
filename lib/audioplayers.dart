@@ -341,8 +341,7 @@ class AudioPlayer {
     bool isLocal = false,
     double volume = 1.0,
     // position must be null by default to be compatible with radio streams
-        position: Duration.zero,
-        double rate: 1.0,
+    position: Duration.zero,
     bool respectSilence = false,
     bool stayAwake = false,
   }) async {
@@ -356,7 +355,6 @@ class AudioPlayer {
       'isLocal': isLocal,
       'volume': volume,
       'position': position?.inMilliseconds,
-      'rate': rate,
       'respectSilence': respectSilence,
       'stayAwake': stayAwake,
     });
@@ -446,7 +444,7 @@ class AudioPlayer {
     );
   }
 
-  /// Sets the playback rate - call this after first calling play() or resume(). Works only on iOS for now
+  /// Sets the playback rate - call this after first calling play() or resume().
   ///
   /// iOS has limits between 0.5 and 2x
   /// not sure if that's changed recently.
@@ -566,26 +564,6 @@ class AudioPlayer {
       default:
         _log('Unknown method ${call.method} ');
     }
-  }
-
-  /// Sets the play rate. rate value greater than 1.0 is faster and to slow playback use less than 1.0.
-  ///
-  /// If result is
-  ///   1: playing state will change to PLAYING
-  ///   2: will not change current status
-  ///   3: rate == 0, will change to PAUSED
-  Future<int> setRate(double rate) async {
-    var result = await _invokeMethod('setRate', {'rate': rate});
-    if(result == 1) {
-      if(state != AudioPlayerState.PLAYING) {
-        state = AudioPlayerState.PLAYING;
-      }
-    } else if(result == 3) {
-      if(state != AudioPlayerState.PAUSED) {
-        state = AudioPlayerState.PAUSED;
-      }
-    }
-    return result;
   }
 
   static void _log(String param) {
