@@ -1,11 +1,11 @@
 package xyz.luan.audioplayers;
 
+import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.PowerManager;
-import android.content.Context;
 
 import java.io.IOException;
 
@@ -72,12 +72,14 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
         if (this.rate != rate) {
             this.rate = rate;
             if (!this.released) {
-                this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+                }
                 this.playing = rate != 0;
-                if(this.playing) {
+                if (this.playing) {
                     this.ref.handleIsPlaying(this);
                 }
-                return this.playing? 1 : 3;
+                return this.playing ? 1 : 3;
             }
         }
         return 2;
@@ -149,7 +151,9 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
             } else if (this.prepared) {
                 this.player.start();
                 this.ref.handleIsPlaying(this);
-                this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+                }
             }
         }
     }
@@ -218,7 +222,9 @@ public class WrappedMediaPlayer extends Player implements MediaPlayer.OnPrepared
         if (this.playing) {
             this.player.start();
             ref.handleIsPlaying(this);
-            this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                this.player.setPlaybackParams(this.player.getPlaybackParams().setSpeed((float) rate));
+            }
         }
         if (this.shouldSeekTo >= 0) {
             this.player.seekTo(this.shouldSeekTo);
