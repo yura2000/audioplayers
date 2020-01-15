@@ -622,7 +622,7 @@ float _playbackRate = 1.0;
     return;
   }
 
-  [ self pause:playerId ];
+  [ self stop:playerId ];
 
   if ([ playerInfo[@"looping"] boolValue]) {
     [ self seek:playerId time:CMTimeMakeWithSeconds(0,1) ];
